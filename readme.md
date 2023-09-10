@@ -18,8 +18,18 @@ This package works fine alongside traditional Laravel migration files, for the c
 
 Require the package via composer:
 
+Add in `composer.json`:
 ```console
-composer require bastinald/laravel-automatic-migrations
+"repositories": [
+    {
+        "type": "vcs",
+        "url": "https://github.com/joecharika/laravel-auto-migrations"
+    }
+]
+```
+
+```console
+composer require laravel-auto/migrations
 ```
 
 ## Usage
@@ -98,13 +108,13 @@ The `migrate:auto` command will run the automatic migrations in the order specif
 Use your own model and factory stubs by publishing package files:
 
 ```console
-php artisan vendor:publish --tag=laravel-automatic-migrations
+php artisan vendor:publish --tag=laravel-auto-migrations
 ```
 
-Update the `stub_path` in `config/laravel-automatic-migrations.php`:
+Update the `stub_path` in `config/laravel-auto-migrations.php`:
 
 ```php
-'stub_path' => resource_path('stubs/vendor/laravel-automatic-migrations'),
+'stub_path' => resource_path('stubs/vendor/laravel-auto-migrations'),
 ```
 
-Now edit the stub files inside `resources/stubs/vendor/laravel-automatic-migrations`. Commands will now use these stub files to make models and factories.
+Now edit the stub files inside `resources/stubs/vendor/laravel-auto-migrations`. Commands will now use these stub files to make models and factories.

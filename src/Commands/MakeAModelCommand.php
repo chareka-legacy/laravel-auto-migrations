@@ -1,6 +1,6 @@
 <?php
 
-namespace Bastinald\LaravelAutomaticMigrations\Commands;
+namespace Chareka\LaravelAuto\Migrations\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
@@ -80,7 +80,7 @@ class MakeAModelCommand extends Command
             $contents = Str::replace(
                 array_keys($replaces),
                 $replaces,
-                $this->filesystem->get(config('laravel-automatic-migrations.stub_path') . '/' . $stub)
+                $this->filesystem->get(config('laravel-auto-migrations.stub_path') . '/' . $stub)
             );
 
             $this->filesystem->ensureDirectoryExists(dirname($path));

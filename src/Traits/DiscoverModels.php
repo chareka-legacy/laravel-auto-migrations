@@ -1,6 +1,6 @@
 <?php
 
-namespace Bastinald\LaravelAutomaticMigrations\Traits;
+namespace Chareka\LaravelAuto\Migrations\Traits;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
