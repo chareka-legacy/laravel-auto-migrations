@@ -1,0 +1,28 @@
+{
+    "name": "natsuite/laravel-automatic-migrations",
+    "description": "Automatic Laravel model migrations.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Joseph Charika",
+            "email": "joecharika@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "doctrine/dbal": "^3.0",
+        "laravel/framework": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Bastinald\\LaravelAutomaticMigrations\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Bastinald\\LaravelAutomaticMigrations\\Providers\\LaravelAutomaticMigrationsProvider"
+            ]
+        }
+    }
+}
