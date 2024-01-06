@@ -80,7 +80,7 @@ class MakeAModelCommand extends Command
             $contents = Str::replace(
                 array_keys($replaces),
                 $replaces,
-                $this->filesystem->get(config('laravel-automatic-migrations.stub_path') . '/' . $stub)
+                $this->filesystem->get(config('auto-migrate.stub_path') . '/' . $stub)
             );
 
             $this->filesystem->ensureDirectoryExists(dirname($path));
