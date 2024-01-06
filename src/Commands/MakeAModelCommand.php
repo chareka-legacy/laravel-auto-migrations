@@ -1,8 +1,8 @@
 <?php
 
-namespace Bastinald\LaravelAutomaticMigrations\Commands;
+namespace Chareka\AutoMigrate\Commands;
 
-use Bastinald\LaravelAutomaticMigrations\Parsers\ComponentParser;
+use Chareka\AutoMigrate\Parsers\ComponentParser;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;

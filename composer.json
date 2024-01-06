@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Bastinald\\LaravelAutomaticMigrations\\": "src"
+            "Chareka\\AutoMigrate\\": "src"
         },
         "files": [
             "src/helpers.php"
@@ -24,7 +24,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Bastinald\\LaravelAutomaticMigrations\\Providers\\LaravelAutomaticMigrationsProvider"
+                "Chareka\\AutoMigrate\\Providers\\AutoMigrateProvider"
             ]
         }
     }

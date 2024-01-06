@@ -1,8 +1,8 @@
 <?php
 
-namespace Bastinald\LaravelAutomaticMigrations\Commands;
+namespace Chareka\AutoMigrate\Commands;
 
-use Bastinald\LaravelAutomaticMigrations\Traits\DiscoverModels;
+use Chareka\AutoMigrate\Traits\DiscoverModels;
 use Illuminate\Console\Command;
 use ReflectionException;
 

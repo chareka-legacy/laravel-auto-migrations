@@ -1,13 +1,13 @@
 <?php
 
-namespace Bastinald\LaravelAutomaticMigrations\Providers;
+namespace Chareka\AutoMigrate\Providers;
 
-use Bastinald\LaravelAutomaticMigrations\Commands\MakeAModelCommand;
-use Bastinald\LaravelAutomaticMigrations\Commands\MigrateAutoCommand;
-use Bastinald\LaravelAutomaticMigrations\Commands\MigrateAutoDiscoverCommand;
+use Chareka\AutoMigrate\Commands\MakeAModelCommand;
+use Chareka\AutoMigrate\Commands\MigrateAutoCommand;
+use Chareka\AutoMigrate\Commands\MigrateAutoDiscoverCommand;
 use Illuminate\Support\ServiceProvider;
 
-class LaravelAutomaticMigrationsProvider extends ServiceProvider
+class AutoMigrateProvider extends ServiceProvider
 {
     public function boot(): void
     {
@@ -32,6 +32,6 @@ class LaravelAutomaticMigrationsProvider extends ServiceProvider
 
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../../config/laravel-automatic-migrations.php', 'laravel-automatic-migrations');
+        $this->mergeConfigFrom(__DIR__ . '/../../config/auto-migrate.php', 'laravel-auto-migrations');
     }
 }
