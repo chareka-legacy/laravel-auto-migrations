@@ -5,9 +5,8 @@ namespace Chareka\AutoMigrate\Parsers;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
-use function Bastinald\LaravelAutomaticMigrations\str;
+use function Chareka\AutoMigrate\str;
 
-#[\AllowDynamicProperties]
 class ComponentParser
 {
     protected $appPath;
