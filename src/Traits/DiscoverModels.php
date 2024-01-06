@@ -1,6 +1,6 @@
 <?php
 
-namespace Chareka\LaravelAuto\Migrations\Traits;
+namespace Bastinald\LaravelAutomaticMigrations\Traits;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -29,27 +29,29 @@ trait DiscoverModels
     private function discoverBaseModels(): array
     {
         $models = [];
-        $path = app_path('Models');
+        $paths = [app_path('Models'), app_path('Entities')];
         $namespace = app()->getNamespace();
 
-        if (!is_dir($path)) return $models;
+        foreach ($paths as $path) {
+            if (!is_dir($path)) return $models;
 
-        foreach ((new Finder)->in($path) as $file) {
-            if ($file->isDir()) continue;
+            foreach ((new Finder)->in($path) as $file) {
+                if ($file->isDir()) continue;
 
-            $model = $namespace . str_replace(
-                    ['/', '.php'],
-                    ['\\', ''],
-                    Str::after($file->getRealPath(), realpath(app_path()) . DIRECTORY_SEPARATOR)
-                );
+                $model = $namespace . str_replace(
+                        ['/', '.php'],
+                        ['\\', ''],
+                        Str::after($file->getRealPath(), realpath(app_path()) . DIRECTORY_SEPARATOR)
+                    );
 
-            if (!$this->isValidModel($model)) continue;
+                if (!$this->isValidModel($model)) continue;
 
-            $models[] = [
-                'name' => $model,
-                'object' => $object = app($model),
-                'order' => $object->migrationOrder ?? 0,
-            ];
+                $models[] = [
+                    'name' => $model,
+                    'object' => $object = app($model),
+                    'order' => $object->migrationOrder ?? 0,
+                ];
+            }
         }
 
         return $models;
@@ -66,8 +68,11 @@ trait DiscoverModels
 
         foreach (glob(base_path('modules/*'), GLOB_ONLYDIR) as $module) {
             $path = $module . '/Models';
+            $paths = [$module . '/Models', $module . '/Entities'];
 
-            if (is_dir($path)) {
+            foreach ($paths as $path) {
+                if (!is_dir($path)) continue;
+
                 foreach ((new Finder)->files()->in($path) as $file) {
                     if ($file->isDir()) continue;
 
@@ -86,6 +91,7 @@ trait DiscoverModels
                 }
             }
         }
+
         return $models;
     }
 
@@ -94,11 +100,11 @@ trait DiscoverModels
      */
     private function isValidModel($model): bool
     {
+        //        if(!class_exists($model)) return false;
+
         $reflector = new ReflectionClass($model);
 
-        if (!$reflector->isInstantiable()) return false;
-
-        if (!method_exists($model, 'migration')) return false;
+        if (!$reflector->isInstantiable() || !method_exists($model, 'migration')) return false;
 
         return true;
     }

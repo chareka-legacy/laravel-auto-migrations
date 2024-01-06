@@ -1,10 +1,10 @@
 <?php
 
-namespace Chareka\LaravelAuto\Migrations\Providers;
+namespace Bastinald\LaravelAutomaticMigrations\Providers;
 
-use Chareka\LaravelAuto\Migrations\Commands\MakeAModelCommand;
-use Chareka\LaravelAuto\Migrations\Commands\MigrateAutoCommand;
-use Chareka\LaravelAuto\Migrations\Commands\MigrateAutoDiscoverCommand;
+use Bastinald\LaravelAutomaticMigrations\Commands\MakeAModelCommand;
+use Bastinald\LaravelAutomaticMigrations\Commands\MigrateAutoCommand;
+use Bastinald\LaravelAutomaticMigrations\Commands\MigrateAutoDiscoverCommand;
 use Illuminate\Support\ServiceProvider;
 
 class LaravelAutomaticMigrationsProvider extends ServiceProvider
@@ -20,18 +20,18 @@ class LaravelAutomaticMigrationsProvider extends ServiceProvider
         }
 
         $this->publishes(
-            [__DIR__ . '/../../config/auto-migrate.php' => config_path('auto-migrations.php')],
-            ['auto-migrations', 'auto-migrations:config']
+            [__DIR__ . '/../../config/laravel-automatic-migrations.php' => config_path('laravel-automatic-migrations.php')],
+            ['laravel-automatic-migrations', 'laravel-automatic-migrations:config']
         );
 
         $this->publishes(
-            [__DIR__ . '/../../resources/stubs' => resource_path('stubs/vendor/laravel-auto-migrations')],
-            ['auto-migrations', 'auto-migrations:stubs']
+            [__DIR__ . '/../../resources/stubs' => resource_path('stubs/vendor/laravel-automatic-migrations')],
+            ['laravel-automatic-migrations', 'laravel-automatic-migrations:stubs']
         );
     }
 
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../../config/auto-migrate.php', 'auto-migrations');
+        $this->mergeConfigFrom(__DIR__ . '/../../config/laravel-automatic-migrations.php', 'laravel-automatic-migrations');
     }
 }

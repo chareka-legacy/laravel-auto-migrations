@@ -1,8 +1,9 @@
 <?php
 
-namespace Chareka\LaravelAuto\Migrations\Commands;
+namespace Bastinald\LaravelAutomaticMigrations\Commands;
 
-use Chareka\LaravelAuto\Migrations\Traits\DiscoverModels;
+use Bastinald\LaravelAutomaticMigrations\Traits\DiscoverModels;
+use Doctrine\DBAL\Exception;
 use Illuminate\Console\Command;
 use Doctrine\DBAL\Schema\Comparator;
 use Illuminate\Support\Facades\Schema;
@@ -17,6 +18,10 @@ class MigrateAutoCommand extends Command
 
     protected $signature = 'migrate:auto {--f|--fresh} {--s|--seed} {--force}';
 
+    /**
+     * @throws \ReflectionException
+     * @throws Exception
+     */
     public function handle(): void
     {
         if (app()->environment('production') && !$this->option('force')) {
@@ -49,6 +54,7 @@ class MigrateAutoCommand extends Command
 
     /**
      * @throws \ReflectionException
+     * @throws Exception
      */
     private function handleAutomaticMigrations(): void
     {
@@ -57,13 +63,16 @@ class MigrateAutoCommand extends Command
         }
     }
 
+    /**
+     * @throws Exception
+     */
     private function migrate($model): void
     {
         $modelTable = $model->getTable();
         $tempTable = 'table_' . $modelTable;
 
         Schema::dropIfExists($tempTable);
-        Schema::create($tempTable, function (Blueprint $table) use ($model) {
+        Schema::create($tempTable, static function (Blueprint $table) use ($model) {
             $model->migration($table);
         });
 

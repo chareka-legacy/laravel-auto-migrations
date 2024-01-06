@@ -1,5 +1,5 @@
 {
-    "name": "laravel-auto/migrations",
+    "name": "natsuite/laravel-automatic-migrations",
     "description": "Automatic Laravel model migrations.",
     "license": "MIT",
     "authors": [
@@ -10,19 +10,21 @@
         }
     ],
     "require": {
-        "doctrine/dbal": ">=3.6",
-        "laravel/framework": ">=8.0",
-        "livewire/livewire": "^2.0"
+        "doctrine/dbal": ">=3.0",
+        "laravel/framework": "*"
     },
     "autoload": {
         "psr-4": {
-            "Chareka\\LaravelAuto\\Migrations\\": "src"
-        }
+            "Bastinald\\LaravelAutomaticMigrations\\": "src"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Chareka\\LaravelAuto\\Migrations\\Providers\\LaravelAutomaticMigrationsProvider"
+                "Bastinald\\LaravelAutomaticMigrations\\Providers\\LaravelAutomaticMigrationsProvider"
             ]
         }
     }

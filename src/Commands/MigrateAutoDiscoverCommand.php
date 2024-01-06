@@ -1,8 +1,8 @@
 <?php
 
-namespace Chareka\LaravelAuto\Migrations\Commands;
+namespace Bastinald\LaravelAutomaticMigrations\Commands;
 
-use Chareka\LaravelAuto\Migrations\Traits\DiscoverModels;
+use Bastinald\LaravelAutomaticMigrations\Traits\DiscoverModels;
 use Illuminate\Console\Command;
 use ReflectionException;
 
@@ -25,7 +25,7 @@ class MigrateAutoDiscoverCommand extends Command
         $total += $models->count();
 
         foreach ($models->sortBy('order') as $model) {
-            $this->info('Found model: ' . $model['name']);
+            $this->info(" - {$model['name']}");
         }
 
         $this->info('Fetching modular models...');
@@ -34,9 +34,9 @@ class MigrateAutoDiscoverCommand extends Command
         $total += $models->count();
 
         foreach ($models->sortBy('order') as $model) {
-            $this->info('Found modular model: ' . $model['name']);
+            $this->info(" - {$model['name']}");
         }
 
-        $this->info("Automatic discovery found $total models.");
+        $this->info("Automatic discovery found {$total} models.");
     }
 }

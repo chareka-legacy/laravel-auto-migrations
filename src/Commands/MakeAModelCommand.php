@@ -1,11 +1,11 @@
 <?php
 
-namespace Chareka\LaravelAuto\Migrations\Commands;
+namespace Bastinald\LaravelAutomaticMigrations\Commands;
 
+use Bastinald\LaravelAutomaticMigrations\Parsers\ComponentParser;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
-use Livewire\Commands\ComponentParser;
 
 class MakeAModelCommand extends Command
 {
@@ -80,7 +80,7 @@ class MakeAModelCommand extends Command
             $contents = Str::replace(
                 array_keys($replaces),
                 $replaces,
-                $this->filesystem->get(config('laravel-auto-migrations.stub_path') . '/' . $stub)
+                $this->filesystem->get(config('laravel-automatic-migrations.stub_path') . '/' . $stub)
             );
 
             $this->filesystem->ensureDirectoryExists(dirname($path));
