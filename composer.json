@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "doctrine/dbal": "^3.6",
+        "doctrine/dbal": "^3.7",
         "laravel/framework": ">=8.0",
         "livewire/livewire": "^2.0"
     },
