@@ -20,18 +20,18 @@ class AutoMigrateProvider extends ServiceProvider
         }
 
         $this->publishes(
-            [__DIR__ . '/../../config/laravel-automatic-migrations.php' => config_path('laravel-automatic-migrations.php')],
-            ['laravel-automatic-migrations', 'laravel-automatic-migrations:config']
+            [__DIR__ . '/../../config/auto-migrate.php' => config_path('auto-migrate.php')],
+            ['auto-migrate', 'auto-migrate:config']
         );
 
         $this->publishes(
-            [__DIR__ . '/../../resources/stubs' => resource_path('stubs/vendor/laravel-automatic-migrations')],
-            ['laravel-automatic-migrations', 'laravel-automatic-migrations:stubs']
+            [__DIR__ . '/../../resources/stubs' => resource_path('stubs/vendor/auto-migrate')],
+            ['auto-migrate', 'auto-migrate:stubs']
         );
     }
 
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../../config/auto-migrate.php', 'laravel-auto-migrations');
+        $this->mergeConfigFrom(__DIR__ . '/../../config/auto-migrate.php', 'auto-migrate');
     }
 }
