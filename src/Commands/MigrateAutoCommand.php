@@ -81,17 +81,18 @@ class MigrateAutoCommand extends Command
         });
 
         if (Schema::hasTable($modelTable)) {
-            $connection = $this->getConnection($model->getConnection());
+            $connection = $this->getDoctrineConnection($model->getConnection());
             $schemaManager = $connection->createSchemaManager();
-
-            $schemaManager->alterTable(
-                (new Comparator)->compareTables(
-                    $schemaManager->introspectTable($modelTable),
-                    $schemaManager->introspectTable($tempTable)
-                )
+            $tableDiff = $schemaManager->createComparator()->compareTables(
+                $schemaManager->introspectTable($modelTable),
+                $schemaManager->introspectTable($tempTable)
             );
 
-            $this->line('<info>Table updated:</info> ' . $modelTable);
+            if (!$tableDiff->isEmpty()) {
+                $schemaManager->alterTable($tableDiff);
+
+                $this->line('<info>Table updated:</info> ' . $modelTable);
+            }
 
             Schema::drop($tempTable);
         } else {
@@ -121,22 +122,17 @@ class MigrateAutoCommand extends Command
      * @return \Doctrine\DBAL\Connection
      * @throws Exception
      */
-    public function getConnection(Connection $modelConnection): \Doctrine\DBAL\Connection
+    public function getDoctrineConnection(Connection $modelConnection): \Doctrine\DBAL\Connection
     {
-        // Retrieve the database configuration settings
-        $dbConfig = Config::get('database.connections');
-
-        // Select the desired connection configuration
-        $connectionName = Config::get('database.default', 'mysql'); // Change this to match your DB_CONNECTION setting
-        $connectionSettings = $dbConfig[$connectionName];
+        $connectionSettings = $modelConnection->getConfig();
 
         // Create a connection to the database
         return DriverManager::getConnection([
-            'dbname' => $modelConnection->getDatabaseName(),
+            'dbname' => $connectionSettings['database'],
             'user' => $connectionSettings['username'],
             'password' => $connectionSettings['password'],
             'host' => $connectionSettings['host'],
-            'driver' => $connectionSettings['driver'],
+            'driver' => 'pdo_' . $connectionSettings['driver'],
         ]);
     }
 }
