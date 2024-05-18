@@ -3,9 +3,13 @@
 namespace Chareka\AutoMigrate\Commands;
 
 use Chareka\AutoMigrate\Traits\DiscoverModels;
+use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception;
 use Illuminate\Console\Command;
 use Doctrine\DBAL\Schema\Comparator;
+use Illuminate\Database\Connection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Database\Schema\Blueprint;
@@ -66,7 +70,7 @@ class MigrateAutoCommand extends Command
     /**
      * @throws Exception
      */
-    private function migrate($model): void
+    private function migrate(Model $model): void
     {
         $modelTable = $model->getTable();
         $tempTable = 'table_' . $modelTable;
@@ -77,16 +81,17 @@ class MigrateAutoCommand extends Command
         });
 
         if (Schema::hasTable($modelTable)) {
-            $schemaManager = $model->getConnection()->getDoctrineSchemaManager();
-            $modelTableDetails = $schemaManager->listTableDetails($modelTable);
-            $tempTableDetails = $schemaManager->listTableDetails($tempTable);
-            $tableDiff = (new Comparator)->diffTable($modelTableDetails, $tempTableDetails);
+            $connection = $this->getConnection($model->getConnection());
+            $schemaManager = $connection->createSchemaManager();
 
-            if ($tableDiff) {
-                $schemaManager->alterTable($tableDiff);
+            $schemaManager->alterTable(
+                (new Comparator)->compareTables(
+                    $schemaManager->introspectTable($modelTable),
+                    $schemaManager->introspectTable($tempTable)
+                )
+            );
 
-                $this->line('<info>Table updated:</info> ' . $modelTable);
-            }
+            $this->line('<info>Table updated:</info> ' . $modelTable);
 
             Schema::drop($tempTable);
         } else {
@@ -109,5 +114,29 @@ class MigrateAutoCommand extends Command
         }
 
         Artisan::call($command, [], $this->getOutput());
+    }
+
+    /**
+     * @param Connection $modelConnection
+     * @return \Doctrine\DBAL\Connection
+     * @throws Exception
+     */
+    public function getConnection(Connection $modelConnection): \Doctrine\DBAL\Connection
+    {
+        // Retrieve the database configuration settings
+        $dbConfig = Config::get('database.connections');
+
+        // Select the desired connection configuration
+        $connectionName = Config::get('database.default', 'mysql'); // Change this to match your DB_CONNECTION setting
+        $connectionSettings = $dbConfig[$connectionName];
+
+        // Create a connection to the database
+        return DriverManager::getConnection([
+            'dbname' => $modelConnection->getDatabaseName(),
+            'user' => $connectionSettings['username'],
+            'password' => $connectionSettings['password'],
+            'host' => $connectionSettings['host'],
+            'driver' => $connectionSettings['driver'],
+        ]);
     }
 }
