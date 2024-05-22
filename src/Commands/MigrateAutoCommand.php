@@ -2,23 +2,20 @@
 
 namespace Chareka\AutoMigrate\Commands;
 
+use Chareka\AutoMigrate\Parsers\CliPrettier;
 use Chareka\AutoMigrate\Traits\DiscoverModels;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception;
 use Illuminate\Console\Command;
-use Doctrine\DBAL\Schema\Comparator;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Str;
-use Symfony\Component\Finder\Finder;
 
 class MigrateAutoCommand extends Command
 {
-    use DiscoverModels;
+    use DiscoverModels, CliPrettier;
 
     protected $signature = 'migrate:auto {--f|--fresh} {--s|--seed} {--force}';
 
@@ -29,7 +26,7 @@ class MigrateAutoCommand extends Command
     public function handle(): void
     {
         if (app()->environment('production') && !$this->option('force')) {
-            $this->warn('Use the <info>--force</info> to migrate in production.');
+            $this->writeWarning('Use the [--force] to migrate in production.');
 
             return;
         }
@@ -38,8 +35,9 @@ class MigrateAutoCommand extends Command
         $this->handleAutomaticMigrations();
         $this->seed();
 
-        $this->info('Automatic migration completed successfully.');
+        $this->writeInfo('Automatic migration completed successfully.');
     }
+
 
     private function handleTraditionalMigrations(): void
     {
@@ -91,14 +89,14 @@ class MigrateAutoCommand extends Command
             if (!$tableDiff->isEmpty()) {
                 $schemaManager->alterTable($tableDiff);
 
-                $this->line('<info>Table updated:</info> ' . $modelTable);
+                $this->writeInfo('Table updated: ' . $modelTable);
             }
 
             Schema::drop($tempTable);
         } else {
             Schema::rename($tempTable, $modelTable);
 
-            $this->line('<info>Table created:</info> ' . $modelTable);
+            $this->writeInfo('Table created: ' . $modelTable);
         }
     }
 

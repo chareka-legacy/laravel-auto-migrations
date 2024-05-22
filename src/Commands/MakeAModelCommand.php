@@ -2,6 +2,7 @@
 
 namespace Chareka\AutoMigrate\Commands;
 
+use Chareka\AutoMigrate\Parsers\CliPrettier;
 use Chareka\AutoMigrate\Parsers\ComponentParser;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
@@ -9,6 +10,8 @@ use Illuminate\Support\Str;
 
 class MakeAModelCommand extends Command
 {
+    use CliPrettier;
+
     protected $signature = 'make:amodel {class} {--force}';
     private $filesystem;
     private $modelParser;
@@ -31,8 +34,8 @@ class MakeAModelCommand extends Command
         );
 
         if ($this->filesystem->exists($this->modelParser->classPath()) && !$this->option('force')) {
-            $this->line('<comment>Model exists:</comment> ' . $this->modelParser->relativeClassPath());
-            $this->warn('Use the <info>--force</info> to overwrite it.');
+            $this->writeError('<comment>Model exists:</comment> ' . $this->modelParser->relativeClassPath());
+            $this->writeWarning('Use the <info>--force</info> to overwrite it.');
 
             return;
         }
@@ -40,8 +43,8 @@ class MakeAModelCommand extends Command
         $this->deleteUserMigration();
         $this->makeStubs();
 
-        $this->line('<info>Model created:</info> ' . $this->modelParser->relativeClassPath());
-        $this->line('<info>Factory created:</info> ' . $this->factoryPath('relativeClassPath'));
+        $this->writeInfo('<info>Model created:</info> ' . $this->modelParser->relativeClassPath());
+        $this->writeInfo('<info>Factory created:</info> ' . $this->factoryPath('relativeClassPath'));
     }
 
     private function deleteUserMigration()
@@ -56,7 +59,7 @@ class MakeAModelCommand extends Command
         if ($this->filesystem->exists($file)) {
             $this->filesystem->delete($file);
 
-            $this->line('<info>Migration deleted:</info> ' . $path);
+            $this->writeError('<info>Migration deleted:</info> ' . $path);
         }
     }
 

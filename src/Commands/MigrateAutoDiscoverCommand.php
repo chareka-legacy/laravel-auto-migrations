@@ -2,13 +2,14 @@
 
 namespace Chareka\AutoMigrate\Commands;
 
+use Chareka\AutoMigrate\Parsers\CliPrettier;
 use Chareka\AutoMigrate\Traits\DiscoverModels;
 use Illuminate\Console\Command;
 use ReflectionException;
 
 class MigrateAutoDiscoverCommand extends Command
 {
-    use DiscoverModels;
+    use DiscoverModels, CliPrettier;
 
     protected $signature = 'migrate:auto-discover';
 
@@ -19,7 +20,7 @@ class MigrateAutoDiscoverCommand extends Command
     {
         $total = 0;
 
-        $this->info('Fetching models...');
+        $this->writeInfo('Fetching models...');
 
         $models = collect($this->discoverBaseModels());
         $total += $models->count();
@@ -28,7 +29,7 @@ class MigrateAutoDiscoverCommand extends Command
             $this->info(" - {$model['name']}");
         }
 
-        $this->info('Fetching modular models...');
+        $this->writeInfo('Fetching modular models...');
 
         $models = collect($this->discoverModularModels());
         $total += $models->count();
@@ -37,6 +38,6 @@ class MigrateAutoDiscoverCommand extends Command
             $this->info(" - {$model['name']}");
         }
 
-        $this->info("Automatic discovery found {$total} models.");
+        $this->writeInfo("Automatic discovery found {$total} models.");
     }
 }
