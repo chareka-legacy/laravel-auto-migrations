@@ -122,6 +122,8 @@ class MigrateAutoCommand extends Command
      */
     public function getDoctrineConnection(Connection $modelConnection): \Doctrine\DBAL\Connection
     {
+        return \DB::getDoctrineConnection();
+        
         $connectionSettings = $modelConnection->getConfig();
 
         // Create a connection to the database
