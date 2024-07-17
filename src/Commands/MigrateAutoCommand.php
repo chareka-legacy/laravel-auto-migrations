@@ -122,17 +122,20 @@ class MigrateAutoCommand extends Command
      */
     public function getDoctrineConnection(Connection $modelConnection): \Doctrine\DBAL\Connection
     {
-        return \DB::getDoctrineConnection();
-        
-        $connectionSettings = $modelConnection->getConfig();
+        try {
+            // support for laravel versions using doctrine/dbal
+            return \DB::getDoctrineConnection();
+        } catch (\BadMethodCallException $e) {
+            $connectionSettings = $modelConnection->getConfig();
 
-        // Create a connection to the database
-        return DriverManager::getConnection([
-            'dbname' => $connectionSettings['database'],
-            'user' => $connectionSettings['username'],
-            'password' => $connectionSettings['password'],
-            'host' => $connectionSettings['host'],
-            'driver' => 'pdo_' . $connectionSettings['driver'],
-        ]);
+            // Create a connection to the database
+            return DriverManager::getConnection([
+                'dbname' => $connectionSettings['database'],
+                'user' => $connectionSettings['username'],
+                'password' => $connectionSettings['password'],
+                'host' => $connectionSettings['host'],
+                'driver' => 'pdo_' . $connectionSettings['driver'],
+            ]);
+        }
     }
 }
