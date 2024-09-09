@@ -37,8 +37,6 @@ class MigrateAutoCommand extends Command
 
         $this->writeInfo('Automatic migration completed successfully.');
     }
-
-
     private function handleTraditionalMigrations(): void
     {
         $command = 'migrate';
@@ -71,7 +69,9 @@ class MigrateAutoCommand extends Command
     private function migrate(Model $model): void
     {
         $modelTable = $model->getTable();
-        $tempTable = 'table_' . $modelTable;
+        $tempTable = 'temp_' . $modelTable;
+
+        $this->writeInfo("Running for $model ($modelTable)");
 
         Schema::dropIfExists($tempTable);
         Schema::create($tempTable, static function (Blueprint $table) use ($model) {
@@ -89,14 +89,14 @@ class MigrateAutoCommand extends Command
             if (!$tableDiff->isEmpty()) {
                 $schemaManager->alterTable($tableDiff);
 
-                $this->writeInfo('Table updated: ' . $modelTable);
+                $this->writeInfo(' - Table updated: ' . $modelTable);
             }
 
             Schema::drop($tempTable);
         } else {
             Schema::rename($tempTable, $modelTable);
 
-            $this->writeInfo('Table created: ' . $modelTable);
+            $this->writeInfo(' - Table created: ' . $modelTable);
         }
     }
 
