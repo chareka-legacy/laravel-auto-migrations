@@ -89,14 +89,14 @@ class MigrateAutoCommand extends Command
             if (!$tableDiff->isEmpty()) {
                 $schemaManager->alterTable($tableDiff);
 
-                $this->writeInfo(' - Table updated: ' . $modelTable);
+                $this->writeWarning(' - Table updated: ' . $modelTable);
             }
 
             Schema::drop($tempTable);
         } else {
             Schema::rename($tempTable, $modelTable);
 
-            $this->writeInfo(' - Table created: ' . $modelTable);
+            $this->writeWarning(' - Table created: ' . $modelTable);
         }
     }
 
