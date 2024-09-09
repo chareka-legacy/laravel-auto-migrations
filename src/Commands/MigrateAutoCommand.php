@@ -71,7 +71,7 @@ class MigrateAutoCommand extends Command
         $modelTable = $model->getTable();
         $tempTable = 'temp_' . $modelTable;
 
-        $this->writeInfo("Running for $model ($modelTable)");
+        $this->writeInfo("Running for " . class_basename($model) . " ($modelTable)");
 
         Schema::dropIfExists($tempTable);
         Schema::create($tempTable, static function (Blueprint $table) use ($model) {
