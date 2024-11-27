@@ -17,7 +17,7 @@ class MigrateAutoCommand extends Command
 {
     use DiscoverModels, CliPrettier;
 
-    protected $signature = 'migrate:auto {--R|fresh} {--S|seed} {--F|force} {--V|verbose}';
+    protected $signature = 'migrate:auto {--R|fresh} {--S|seed} {--F|force} {--I|info}';
 
     /**
      * @throws \ReflectionException
