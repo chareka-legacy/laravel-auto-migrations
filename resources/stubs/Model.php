@@ -5,23 +5,24 @@ namespace DummyModelNamespace;
 use Faker\Generator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Schema\Blueprint;
 
 class DummyModelClass extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $guarded = [];
 
-    public function migration(Blueprint $table)
+    public function migration(Blueprint $table): void
     {
         $table->id();
         $table->string('name');
-        $table->timestamp('created_at')->nullable();
-        $table->timestamp('updated_at')->nullable();
+        $table->timestamps();
+        $table->softDeletes();
     }
 
-    public function definition(Generator $faker)
+    public function definition(Generator $faker): void
     {
         return [
             'name' => $faker->name(),
