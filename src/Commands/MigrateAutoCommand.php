@@ -130,10 +130,14 @@ class MigrateAutoCommand extends Command
 
             // Create a connection to the database
             return DriverManager::getConnection([
+                // MySQL support
                 'dbname' => $connectionSettings['database'],
-                'user' => $connectionSettings['username'],
-                'password' => $connectionSettings['password'],
-                'host' => $connectionSettings['host'],
+                'user' => $connectionSettings['username'] ?? null,
+                'password' => $connectionSettings['password'] ?? null,
+                'host' => $connectionSettings['host'] ?? null,
+                // SQLite support 
+                'path' => $connectionSettings['database'] ?? null,
+                // Generic params
                 'driver' => 'pdo_' . $connectionSettings['driver'],
             ]);
         }
