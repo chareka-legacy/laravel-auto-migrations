@@ -17,7 +17,7 @@ class MigrateAutoCommand extends Command
 {
     use DiscoverModels, CliPrettier;
 
-    protected $signature = 'migrate:auto {--f|--fresh} {--s|--seed} {--force}';
+    protected $signature = 'migrate:auto {-R|--fresh} {-S|--seed} {-F|--force} {-V|--verbose}';
 
     /**
      * @throws \ReflectionException
@@ -71,7 +71,9 @@ class MigrateAutoCommand extends Command
         $modelTable = $model->getTable();
         $tempTable = 'temp_' . $modelTable;
 
-        $this->writeInfo("Auto-migrate for " . class_basename($model) . " ($modelTable)");
+        if($this->option('verbose')){
+            $this->writeInfo("Auto-migrate for " . class_basename($model) . " ($modelTable)");
+        }
 
         Schema::dropIfExists($tempTable);
         Schema::create($tempTable, static function (Blueprint $table) use ($model) {
@@ -89,14 +91,14 @@ class MigrateAutoCommand extends Command
             if (!$tableDiff->isEmpty()) {
                 $schemaManager->alterTable($tableDiff);
 
-                $this->writeWarning(' - Table updated: ' . $modelTable);
+                $this->writeWarning(' * Table updated: ' . $modelTable);
             }
 
             Schema::drop($tempTable);
         } else {
             Schema::rename($tempTable, $modelTable);
 
-            $this->writeWarning(' - Table created: ' . $modelTable);
+            $this->writeWarning(' * Table created: ' . $modelTable);
         }
     }
 
