@@ -22,7 +22,7 @@ class DummyModelClass extends Model
         $table->softDeletes();
     }
 
-    public function definition(Generator $faker): void
+    public function definition(Generator $faker): array
     {
         return [
             'name' => $faker->name(),
