@@ -57,7 +57,7 @@ php artisan migrate:auto
 Make a model with a `migration` method included:
 
 ```console
-php artisan make:amodel {class} {--force} {--s|--no-soft-delete} {--m|--no-static-migration}
+php artisan make:amodel {class} {--force} {--f|no-factory} {--s|no-soft-delete} {--m|no-static-migration}
 ```
 
 This command will also make a factory whose `definition` points to the model method. Use `--force` to overwrite an existing model.
@@ -101,7 +101,7 @@ Use your own model and factory stubs by publishing package files:
 php artisan vendor:publish --tag=laravel-automatic-migrations
 ```
 
-Update the `stub_path` in `config/laravel-automatic-migrations.php`:
+Update the `stub_path` in `config/auto-migrate.php`:
 
 ```php
 'stub_path' => resource_path('stubs/vendor/laravel-automatic-migrations'),
