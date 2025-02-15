@@ -17,7 +17,7 @@ class DummyModelClass extends Authenticatable
     protected $hidden = ['password', 'remember_token'];
     protected $casts = ['email_verified_at' => 'datetime'];
 
-    public function migration(Blueprint $table)
+    public static function migration(Blueprint $table)
     {
         $table->id();
         $table->string('name');

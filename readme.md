@@ -19,12 +19,12 @@ This package works fine alongside traditional Laravel migration files, for the c
 Require the package via composer:
 
 ```console
-composer require bastinald/laravel-automatic-migrations
+composer require laravel-auto/migrations
 ```
 
 ## Usage
 
-Declare a `migration` method in your models:
+Declare a static `migration` method in your models:
 
  ```php
 namespace App\Models;
@@ -34,7 +34,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class MyModel extends Model
 {
-    public function migration(Blueprint $table)
+    public static function migration(Blueprint $table)
     {
         $table->id();
         $table->string('name');
@@ -57,7 +57,7 @@ php artisan migrate:auto
 Make a model with a `migration` method included:
 
 ```console
-php artisan make:amodel {class} {--force}
+php artisan make:amodel {class} {--force} {--s|--no-soft-delete} {--m|--no-static-migration}
 ```
 
 This command will also make a factory whose `definition` points to the model method. Use `--force` to overwrite an existing model.

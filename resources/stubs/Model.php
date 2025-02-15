@@ -14,7 +14,7 @@ class DummyModelClass extends Model
 
     protected $guarded = [];
 
-    public function migration(Blueprint $table): void
+    public static function migration(Blueprint $table): void
     {
         $table->id();
         $table->string('name');

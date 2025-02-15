@@ -5,17 +5,15 @@ namespace Chareka\AutoMigrate\Parsers;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
-use function Chareka\AutoMigrate\str;
+use function str;
 
 class ComponentParser
 {
-    protected $appPath;
-    protected $viewPath;
     protected $component;
     protected $componentClass;
     protected $directories;
 
-    public function __construct($classNamespace, $viewPath, $rawCommand, $stubSubDirectory = '')
+    public function __construct($classNamespace, $rawCommand, $stubSubDirectory = '')
     {
 
         $this->baseClassNamespace = $classNamespace;
@@ -25,7 +23,6 @@ class ComponentParser
         $testPath = static::generateTestPathFromNamespace($this->baseTestNamespace);
 
         $this->baseClassPath = rtrim($classPath, DIRECTORY_SEPARATOR).'/';
-        $this->baseViewPath = rtrim($viewPath, DIRECTORY_SEPARATOR).'/';
         $this->baseTestPath = rtrim($testPath, DIRECTORY_SEPARATOR).'/';
 
         if(! empty($stubSubDirectory) && str($stubSubDirectory)->startsWith('..')) {
