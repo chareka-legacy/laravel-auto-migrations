@@ -2,7 +2,7 @@
     "name": "laravel-auto/migrations",
     "description": "Automatic Laravel model migrations.",
     "license": "MIT",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "authors": [
         {
             "name": "Joseph Charika",
@@ -13,7 +13,7 @@
     "require": {
         "php": ">=8.1",
         "doctrine/dbal": ">=3.0",
-        "laravel/framework": ">=11.0"
+        "laravel/framework": ">=9.0"
     },
     "autoload": {
         "psr-4": {
