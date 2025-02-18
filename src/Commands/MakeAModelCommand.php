@@ -133,7 +133,7 @@ class MakeAModelCommand extends Command
     private function migrationPath($method): string
     {
         $class = str($this->migrationParser->className());
-        $table = $class->plural()->lower();
+        $table = $class->plural()->slug('_')->lower();
 
         return str($this->migrationParser->$method())
             ->replaceFirst(
