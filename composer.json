@@ -2,7 +2,7 @@
     "name": "laravel-auto/migrations",
     "description": "Automatic Laravel model migrations.",
     "license": "MIT",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "authors": [
         {
             "name": "Joseph Charika",
