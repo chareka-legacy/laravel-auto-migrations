@@ -83,7 +83,7 @@ class MakeAModelCommand extends Command
         }
     }
 
-    private function makeStubs()
+    private function makeStubs(): void
     {
         $prefix = $this->modelParser->className() == 'User' ? 'User' : null;
 
@@ -96,7 +96,7 @@ class MakeAModelCommand extends Command
         }
 
         if (!$this->option('no-static-migration')) {
-            $stubs[$this->migrationPath('classPath')] = 'migration.php';
+            $stubs[$this->migrationPath('classPath')] = 'Migration.php';
         }
 
         $replaces = [
@@ -133,7 +133,7 @@ class MakeAModelCommand extends Command
     private function migrationPath($method): string
     {
         $class = str($this->migrationParser->className());
-        $table = $class->plural()->slug('_')->lower();
+        $table = $class->headline()->slug('_')->plural()->lower();
 
         return str($this->migrationParser->$method())
             ->replaceFirst(
