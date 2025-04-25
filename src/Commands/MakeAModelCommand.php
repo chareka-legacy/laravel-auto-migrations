@@ -85,7 +85,8 @@ class MakeAModelCommand extends Command
 
     private function makeStubs(): void
     {
-        $prefix = $this->modelParser->className() == 'User' ? 'User' : null;
+        $className = $this->modelParser->className();
+        $prefix = $className == 'User' ? 'User' : null;
 
         $stubs = [
             $this->modelParser->classPath() => "{$prefix}Model.php",
@@ -102,11 +103,11 @@ class MakeAModelCommand extends Command
         $replaces = [
             'DummyFactoryClass' => $this->factoryParser->className(),
             'DummyFactoryNamespace' => $this->factoryParser->classNamespace(),
-            'DummyModelClass' => $this->modelParser->className(),
+            'DummyModelClass' => $className,
             'DummyModelNamespace' => $this->modelParser->classNamespace(),
             ', SoftDeletes;' => !$this->option('no-soft-delete') ? ', SoftDeletes;' : ';',
             '$table->softDeletes();' => !$this->option('no-soft-delete') ? '$table->softDeletes();' : ';',
-            'dummy_table' => str($this->modelParser->className())->plural()->lower(),
+            'dummy_table' => str($className)->headline()->slug('_')->plural()->lower(),
         ];
 
         foreach ($stubs as $path => $stub) {
