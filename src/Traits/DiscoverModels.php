@@ -18,7 +18,8 @@ trait DiscoverModels
         $models = collect();
 
         $models->push(...$this->discoverBaseModels());
-        $models->push(...$this->discoverModularModels());
+        $models->push(...$this->discoverModularModels('modules'));
+        $models->push(...$this->discoverModularModels('Modules'));
 
         return $models->sortBy('order');
     }
@@ -60,13 +61,13 @@ trait DiscoverModels
     /**
      * @throws ReflectionException
      */
-    private function discoverModularModels(): array
+    private function discoverModularModels($moduleFolder): array
     {
-        if (!is_dir(base_path('modules'))) return [];
+        if (!is_dir(base_path($moduleFolder))) return [];
 
         $models = [];
 
-        foreach (glob(base_path('modules/*'), GLOB_ONLYDIR) as $module) {
+        foreach (glob(base_path("$moduleFolder/*"), GLOB_ONLYDIR) as $module) {
             $path = $module . '/Models';
             $paths = [$module . '/Models', $module . '/Entities'];
 
