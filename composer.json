@@ -1,30 +1,34 @@
 {
-    "name": "laravel-auto/migrations",
-    "description": "Automatic Laravel model migrations.",
-    "license": "MIT",
-    "version": "1.0.5",
-    "authors": [
-        {
-            "name": "Joseph Charika",
-            "email": "joecharika@gmail.com",
-            "role": "Developer"
-        }
-    ],
-    "require": {
-        "php": ">=8.1",
-        "doctrine/dbal": ">=3.0",
-        "laravel/framework": ">=9.0"
-    },
-    "autoload": {
-        "psr-4": {
-            "Chareka\\AutoMigrate\\": "src"
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Chareka\\AutoMigrate\\Providers\\AutoMigrateProvider"
-            ]
-        }
+  "name": "laravel-auto/migrations",
+  "description": "Automatic Laravel model migrations.",
+  "license": "MIT",
+  "version": "1.1.0",
+  "authors": [
+    {
+      "name": "Joseph Charika",
+      "email": "joecharika@gmail.com",
+      "role": "Developer"
     }
+  ],
+  "require": {
+    "php": ">=8.1",
+    "doctrine/dbal": ">=3.0",
+    "laravel/framework": ">=9.0",
+    "nette/php-generator": "^4.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "Chareka\\AutoMigrate\\": "src"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Chareka\\AutoMigrate\\Providers\\AutoMigrateProvider"
+      ]
+    }
+  },
+  "require-dev": {
+    "roave/security-advisories": "dev-latest"
+  }
 }

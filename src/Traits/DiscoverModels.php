@@ -34,10 +34,14 @@ trait DiscoverModels
         $namespace = app()->getNamespace();
 
         foreach ($paths as $path) {
-            if (!is_dir($path)) return $models;
+            if (!is_dir($path)) {
+                return $models;
+            }
 
             foreach ((new Finder)->in($path) as $file) {
-                if ($file->isDir()) continue;
+                if ($file->isDir()) {
+                    continue;
+                }
 
                 $model = $namespace . str_replace(
                         ['/', '.php'],
@@ -45,7 +49,9 @@ trait DiscoverModels
                         Str::after($file->getRealPath(), realpath(app_path()) . DIRECTORY_SEPARATOR)
                     );
 
-                if (!$this->isValidModel($model)) continue;
+                if (!$this->isValidModel($model)) {
+                    continue;
+                }
 
                 $models[] = [
                     'name' => $model,
@@ -63,7 +69,9 @@ trait DiscoverModels
      */
     private function discoverModularModels($moduleFolder): array
     {
-        if (!is_dir(base_path($moduleFolder))) return [];
+        if (!is_dir(base_path($moduleFolder))) {
+            return [];
+        }
 
         $models = [];
 
@@ -72,17 +80,25 @@ trait DiscoverModels
             $paths = [$module . '/Models', $module . '/Entities'];
 
             foreach ($paths as $path) {
-                if (!is_dir($path)) continue;
+                if (!is_dir($path)) {
+                    continue;
+                }
 
                 foreach ((new Finder)->files()->in($path) as $file) {
-                    if ($file->isDir()) continue;
+                    if ($file->isDir()) {
+                        continue;
+                    }
 
-                    $namespace = str_replace('/', '\\', str_replace(base_path(), '', $file->getRealPath()));
-                    $namespace = str_replace('.php', '', $namespace);
-                    $namespace = str_replace('\\modules\\', 'Modules\\', $namespace);
+                    $namespace = str_replace(
+                        [base_path(), '/', '.php', '\\modules\\'],
+                        ['', '\\', '', 'Modules\\'],
+                        $file->getRealPath()
+                    );
                     $class = ltrim($namespace, '\\');
 
-                    if (!$this->isValidModel($class)) continue;
+                    if (!$this->isValidModel($class)) {
+                        continue;
+                    }
 
                     $models[] = [
                         'name' => $class,
@@ -101,12 +117,15 @@ trait DiscoverModels
      */
     private function isValidModel($model): bool
     {
-        //        if(!class_exists($model)) return false;
+        if (!class_exists($model)) {
+            return false;
+        }
 
         $reflector = new ReflectionClass($model);
 
-        if (!$reflector->isInstantiable() || !method_exists($model, 'migration')) return false;
+        $isInstantiable = $reflector->isInstantiable();
+        $hasMigrationMethod = method_exists($model, 'migration');
 
-        return true;
+        return !(!$isInstantiable || !$hasMigrationMethod);
     }
 }
