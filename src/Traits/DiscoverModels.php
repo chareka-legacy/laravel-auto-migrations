@@ -3,7 +3,6 @@
 namespace Chareka\AutoMigrate\Traits;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use ReflectionClass;
 use ReflectionException;
 use Symfony\Component\Finder\Finder;
@@ -17,96 +16,99 @@ trait DiscoverModels
     {
         $models = collect();
 
-        $models->push(...$this->discoverBaseModels());
-        $models->push(...$this->discoverModularModels('modules'));
-        $models->push(...$this->discoverModularModels('Modules'));
+        foreach ($this->configuredModelPaths() as $path => $namespace) {
+            foreach ($this->resolvePath($path, $namespace) as [$directory, $rootNamespace]) {
+                $models->push(...$this->discoverModelsIn($directory, $rootNamespace));
+            }
+        }
 
-        return $models->sortBy('order');
+        return $models->unique('name')->sortBy('order')->values();
+    }
+
+    /**
+     * Config format (config/auto-migrate.php):
+     *
+     * 'model_paths' => [
+     *     app_path('Models')              => 'App\\Models',
+     *     app_path('Entities')            => 'App\\Entities',
+     *     base_path('Modules/*\/Models')  => 'Modules\\*\\Models',
+     * ],
+     *
+     * Each "*" in the path is a wildcard folder, and is substituted
+     * (in order) into the matching "*" in the namespace.
+     */
+    private function configuredModelPaths(): array
+    {
+        return config('auto-migrate.model_paths', []);
+    }
+
+    /**
+     * Expand a (possibly wildcard) path into concrete [directory, namespace] pairs.
+     */
+    private function resolvePath(string $pattern, string $namespace): array
+    {
+        $pattern = rtrim(str_replace('\\', '/', $pattern), '/');
+        $namespace = trim($namespace, '\\');
+
+        if (!str_contains($pattern, '*')) {
+            return is_dir($pattern) ? [[$pattern, $namespace]] : [];
+        }
+
+        $patternParts = explode('/', $pattern);
+        $resolved = [];
+
+        foreach (glob($pattern, GLOB_ONLYDIR) ?: [] as $directory) {
+            $directory = str_replace('\\', '/', $directory);
+            $dirParts = explode('/', $directory);
+
+            // Collect the folder names matched by each wildcard segment
+            $matches = [];
+            foreach ($patternParts as $i => $part) {
+                if (str_contains($part, '*') && isset($dirParts[$i])) {
+                    $matches[] = $dirParts[$i];
+                }
+            }
+
+            // Substitute them into the namespace, in order
+            $resolvedNamespace = preg_replace_callback(
+                '/\*/',
+                static function () use (&$matches) {
+                    return array_shift($matches) ?? '';
+                },
+                $namespace
+            );
+
+            $resolved[] = [$directory, $resolvedNamespace];
+        }
+
+        return $resolved;
     }
 
     /**
      * @throws ReflectionException
      */
-    private function discoverBaseModels(): array
+    private function discoverModelsIn(string $directory, string $rootNamespace): array
     {
         $models = [];
-        $paths = [app_path('Models'), app_path('Entities')];
-        $namespace = app()->getNamespace();
 
-        foreach ($paths as $path) {
-            if (!is_dir($path)) {
-                return $models;
+        foreach ((new Finder)->files()->name('*.php')->in($directory) as $file) {
+            $relative = str_replace(
+                ['/', '.php'],
+                ['\\', ''],
+                $file->getRelativePathname()
+            );
+
+            $class = $rootNamespace . '\\' . $relative;
+
+            if (!$this->isValidModel($class)) {
+                continue;
             }
 
-            foreach ((new Finder)->in($path) as $file) {
-                if ($file->isDir()) {
-                    continue;
-                }
-
-                $model = $namespace . str_replace(
-                        ['/', '.php'],
-                        ['\\', ''],
-                        Str::after($file->getRealPath(), realpath(app_path()) . DIRECTORY_SEPARATOR)
-                    );
-
-                if (!$this->isValidModel($model)) {
-                    continue;
-                }
-
-                $models[] = [
-                    'name' => $model,
-                    'object' => $object = app($model),
-                    'order' => $object->migrationOrder ?? 0,
-                ];
-            }
-        }
-
-        return $models;
-    }
-
-    /**
-     * @throws ReflectionException
-     */
-    private function discoverModularModels($moduleFolder): array
-    {
-        if (!is_dir(base_path($moduleFolder))) {
-            return [];
-        }
-
-        $models = [];
-
-        foreach (glob(base_path("$moduleFolder/*"), GLOB_ONLYDIR) as $module) {
-            $path = $module . '/Models';
-            $paths = [$module . '/Models', $module . '/Entities'];
-
-            foreach ($paths as $path) {
-                if (!is_dir($path)) {
-                    continue;
-                }
-
-                foreach ((new Finder)->files()->in($path) as $file) {
-                    if ($file->isDir()) {
-                        continue;
-                    }
-
-                    $namespace = str_replace(
-                        [base_path(), '/', '.php', '\\modules\\'],
-                        ['', '\\', '', 'Modules\\'],
-                        $file->getRealPath()
-                    );
-                    $class = ltrim($namespace, '\\');
-
-                    if (!$this->isValidModel($class)) {
-                        continue;
-                    }
-
-                    $models[] = [
-                        'name' => $class,
-                        'object' => $object = app($class),
-                        'order' => $object->migrationOrder ?? 0,
-                    ];
-                }
-            }
+            $models[] = [
+                'name' => $class,
+                'object' => $object = app($class),
+                'order' => $object->migrationOrder ?? 0,
+            ];
         }
 
         return $models;
@@ -123,9 +125,6 @@ trait DiscoverModels
 
         $reflector = new ReflectionClass($model);
 
-        $isInstantiable = $reflector->isInstantiable();
-        $hasMigrationMethod = method_exists($model, 'migration');
-
-        return !(!$isInstantiable || !$hasMigrationMethod);
+        return $reflector->isInstantiable() && method_exists($model, 'migration');
     }
 }
