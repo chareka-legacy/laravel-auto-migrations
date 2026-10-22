@@ -22,19 +22,7 @@ class MigrateAutoDiscoverCommand extends Command
 
         $this->writeInfo('Fetching models...');
 
-        $models = collect($this->discoverBaseModels());
-        $total += $models->count();
-
-        foreach ($models->sortBy('order') as $model) {
-            $this->info(" - {$model['name']}");
-        }
-
-        $this->writeInfo('Fetching modular models...');
-
-        $models = collect($this->discoverModularModels('modules'));
-        $total += $models->count();
-
-        $models = collect($this->discoverModularModels('Modules'));
+        $models = collect($this->discoverModels());
         $total += $models->count();
 
         foreach ($models->sortBy('order') as $model) {
